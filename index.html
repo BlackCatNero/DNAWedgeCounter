@@ -20,54 +20,76 @@
 
   <main>
     <table id="wedgeTable">
-      <thead>
-        <tr>
-          <th>이름</th>
-          <th>보유 수</th>
-          <th>설계도</th>
-          <th>보라 쐐기</th>
-          <th>설계도 필요</th>
-          <th>하위 필요</th>
-          <th>강화 가능 수치</th>
-          <th>조작</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- rows inserted here -->
-      </tbody>
-    </table>
-  </main>
+      <!doctype html>
+      <html lang="ko">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>듀엣 나이트 어비스 - 금쐐기 제작 현황</title>
+        <link rel="stylesheet" href="styles.css">
+      </head>
+      <body>
+        <header>
+          <h1>금쐐기 제작 현황</h1>
+          <div class="controls">
+            <button id="addBtn">쐐기 추가</button>
+            <button id="clearBtn">모두 삭제</button>
+            <button id="exportBtn">내보내기</button>
+            <button id="importBtn">가져오기</button>
+            <input id="importFile" type="file" accept="application/json" style="display:none">
+          </div>
+        </header>
 
-  <!-- Add modal -->
-  <div id="modal" class="modal hidden">
-    <div class="modal-content">
-      <h2>쐐기 추가</h2>
-      <label>이름: <input id="wedgeName" class="name-input" type="text" maxlength="40"></label>
-      <fieldset>
-        <legend>보라 쐐기 필요량</legend>
-        <label><input type="radio" name="subReq" value="5" checked>5개</label>
-        <label><input type="radio" name="subReq" value="3">3개</label>
-      </fieldset>
-      <div class="modal-actions">
-        <button id="modalAdd">확인</button>
-        <button id="modalCancel">취소</button>
-      </div>
-    </div>
-  </div>
+        <main>
+          <table id="wedgeTable">
+            <thead>
+              <tr>
+                <th>이름</th>
+                <th>보유 수</th>
+                <th>설계도</th>
+                <th>하위(보라) 쐐기</th>
+                <th>설계도 필요</th>
+                <th>하위 필요</th>
+                <th>강화 가능 수치</th>
+                <th>조작</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- rows inserted here -->
+            </tbody>
+          </table>
+        </main>
 
-  <!-- Warning modal for 제작 (when resources insufficient) -->
-  <div id="warnModal" class="modal hidden">
-    <div class="modal-content">
-      <h2>자원 부족</h2>
-      <p id="warnMsg">필요 자원이 부족합니다. 어떻게 진행하시겠습니까?</p>
-      <div class="modal-actions">
-        <button id="warnNoConsume">소모 없이 진행</button>
-        <button id="warnForce">강제 소모(음수 허용)</button>
-        <button id="warnCancel">취소</button>
-      </div>
-    </div>
-  </div>
+        <!-- Add modal -->
+        <div id="modal" class="modal hidden">
+          <div class="modal-content">
+            <h2>쐐기 추가</h2>
+            <label>이름: <input id="wedgeName" class="name-input" type="text" maxlength="40"></label>
+            <fieldset>
+              <legend>하위(보라) 쐐기 필요량</legend>
+              <label><input type="radio" name="subReq" value="5" checked>5개</label>
+              <label><input type="radio" name="subReq" value="3">3개</label>
+            </fieldset>
+            <div class="modal-actions">
+              <button id="modalAdd">확인</button>
+              <button id="modalCancel">취소</button>
+            </div>
+          </div>
+        </div>
 
-  <script src="app.js"></script>
-</body>
-</html>
+        <!-- Warning modal for 제작 (when resources insufficient) -->
+        <div id="warnModal" class="modal hidden">
+          <div class="modal-content">
+            <h2>자원 부족</h2>
+            <p id="warnMsg">필요 자원이 부족합니다. 어떻게 진행하시겠습니까?</p>
+            <div class="modal-actions">
+              <button id="warnNoConsume">소모 없이 진행</button>
+              <button id="warnForce">강제 소모(음수 허용)</button>
+              <button id="warnCancel">취소</button>
+            </div>
+          </div>
+        </div>
+
+        <script src="app.js"></script>
+      </body>
+      </html>
