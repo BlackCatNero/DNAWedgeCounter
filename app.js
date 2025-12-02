@@ -62,11 +62,17 @@ function render(){
     nameInput.addEventListener('change', ()=>{ w.name = nameInput.value.trim() || w.name; save(); render(); });
     tdName.appendChild(handle);
     tdName.appendChild(nameInput); tr.appendChild(tdName);
-    // allow dragging only when the handle is used
-    handle.addEventListener('mousedown', ()=>{ tr.draggable = true; });
-    handle.addEventListener('mouseup', ()=>{ setTimeout(()=>{ tr.draggable = false; }, 0); });
-    handle.addEventListener('touchstart', ()=>{ tr.draggable = true; });
-    handle.addEventListener('touchend', ()=>{ setTimeout(()=>{ tr.draggable = false; }, 0); });
+    // make the handle itself draggable and start the drag from it (more reliable)
+    handle.draggable = true;
+    handle.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', String(w.id));
+      tr.classList.add('dragging');
+      try { e.dataTransfer.effectAllowed = 'move'; } catch(err) {}
+    });
+    handle.addEventListener('dragend', () => {
+      tr.classList.remove('dragging');
+      document.querySelectorAll('tr.drag-over').forEach(r=>r.classList.remove('drag-over'));
+    });
 
     // owned (editable only) + 제작 버튼 to the right
     const tdOwned = document.createElement('td');
