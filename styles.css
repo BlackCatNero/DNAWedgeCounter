@@ -33,3 +33,21 @@ table td:nth-child(2){padding-left:6px}
 .name-input{margin-right:6px}
 .center{display:flex;align-items:center}
 .required-badge{background:#ffd166;padding:2px 6px;border-radius:4px;font-weight:600}
+
+/* Drag handle and drop feedback */
+.drag-handle { cursor: grab; display: inline-block; width: 20px; text-align: center; margin-right: 8px; color: #666 }
+tr.dragging { opacity: 0.6 }
+tr.drag-over { outline: 2px dashed #6c9 }
+
+/* Enhancement cutoffs box */
+.cutoffs{position:static;display:inline-block;color:#fff;font-size:13px;margin-right:10px}
+.cutoffs small{opacity:0.9}
+
+/* header-right groups cutoffs and controls on the header's right side */
+.header-right{display:flex;align-items:center;gap:8px}
+
+/* Responsive: on small screens make cutoffs flow full-width above controls */
+@media (max-width:700px){
+	.header-right{flex-direction:column;align-items:flex-start;padding-top:8px}
+	.cutoffs{display:block;margin:6px 0}
+}

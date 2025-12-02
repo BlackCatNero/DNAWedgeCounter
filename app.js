@@ -49,13 +49,24 @@ function render(){
   wedgeTableBody.innerHTML = '';
   wedges.forEach(w => {
     const tr = document.createElement('tr');
+    tr.draggable = false; // enable when dragging the handle
 
     // name (editable)
     const tdName = document.createElement('td');
+    // drag handle + name input
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.textContent = '☰';
     const nameInput = document.createElement('input');
     nameInput.type = 'text'; nameInput.value = w.name; nameInput.maxLength = 40; nameInput.className = 'name-input';
     nameInput.addEventListener('change', ()=>{ w.name = nameInput.value.trim() || w.name; save(); render(); });
+    tdName.appendChild(handle);
     tdName.appendChild(nameInput); tr.appendChild(tdName);
+    // allow dragging only when the handle is used
+    handle.addEventListener('mousedown', ()=>{ tr.draggable = true; });
+    handle.addEventListener('mouseup', ()=>{ setTimeout(()=>{ tr.draggable = false; }, 0); });
+    handle.addEventListener('touchstart', ()=>{ tr.draggable = true; });
+    handle.addEventListener('touchend', ()=>{ setTimeout(()=>{ tr.draggable = false; }, 0); });
 
     // owned (editable only) + 제작 버튼 to the right
     const tdOwned = document.createElement('td');
@@ -103,6 +114,44 @@ function render(){
     const del = document.createElement('button'); del.textContent='삭제'; del.className='icon';
     tdCtrl.appendChild(del); tr.appendChild(tdCtrl);
 
+    // Drag & drop handlers
+    tr.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', String(w.id));
+      tr.classList.add('dragging');
+      try { e.dataTransfer.effectAllowed = 'move'; } catch(err) {}
+    });
+    tr.addEventListener('dragend', (e) => {
+      tr.classList.remove('dragging');
+      // remove any lingering drag-over classes
+      document.querySelectorAll('tr.drag-over').forEach(r=>r.classList.remove('drag-over'));
+    });
+
+    tr.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      tr.classList.add('drag-over');
+      try { e.dataTransfer.dropEffect = 'move'; } catch(err) {}
+    });
+    tr.addEventListener('dragleave', (e) => {
+      tr.classList.remove('drag-over');
+    });
+
+    tr.addEventListener('drop', (e) => {
+      e.preventDefault();
+      tr.classList.remove('drag-over');
+      const idStr = e.dataTransfer.getData('text/plain');
+      const draggedId = parseInt(idStr, 10);
+      if(isNaN(draggedId)) return;
+      const fromIndex = wedges.findIndex(x => x.id === draggedId);
+      const toIndex = wedges.findIndex(x => x.id === w.id);
+      if(fromIndex < 0 || toIndex < 0 || fromIndex === toIndex) return;
+      const item = wedges.splice(fromIndex, 1)[0];
+      // after removal, if dragged item was before target, target index decreases by 1
+      let insertIndex = toIndex;
+      if(fromIndex < toIndex) insertIndex = toIndex - 1;
+      wedges.splice(insertIndex, 0, item);
+      save(); render();
+    });
+
     // produce handler (inline button)
     produceInline.addEventListener('click', ()=>{
       if(w.owned >= 10){ alert('보유 수는 최대 10입니다.'); return; }
@@ -141,6 +190,20 @@ function render(){
 }
 
 // modal logic for add
+// Allow dropping on empty table area to append item to end
+wedgeTableBody.addEventListener('dragover', (e) => { e.preventDefault(); wedgeTableBody.classList.add('drag-over'); });
+wedgeTableBody.addEventListener('dragleave', (e) => { wedgeTableBody.classList.remove('drag-over'); });
+wedgeTableBody.addEventListener('drop', (e) => {
+  e.preventDefault(); wedgeTableBody.classList.remove('drag-over');
+  const idStr = e.dataTransfer.getData('text/plain');
+  const draggedId = parseInt(idStr, 10);
+  if(isNaN(draggedId)) return;
+  const fromIndex = wedges.findIndex(x => x.id === draggedId);
+  if(fromIndex < 0) return;
+  const item = wedges.splice(fromIndex, 1)[0];
+  wedges.push(item);
+  save(); render();
+});
 addBtn.addEventListener('click', ()=>{ wedgeNameInput.value = ''; modal.classList.remove('hidden'); wedgeNameInput.focus(); });
 modalCancel.addEventListener('click', ()=> modal.classList.add('hidden'));
 modalAdd.addEventListener('click', ()=>{
